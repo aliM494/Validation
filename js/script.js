@@ -1,10 +1,11 @@
-import { errorHandler } from '/js/validation.js'
+import ValidationHandler from '/js/validation.js'
 
 const myInput = document.querySelectorAll("Input");
 
 const errors = {
   email: "ایمیل نا معتبر است",
   password: {
+    normal: "رمز وارد شده نا معتبر است",
     weak: "رمز وارد شده ضعیف است",
     medium: "رمز وارد شده متوسط است",
     strong: "رمز وارد شده قوی است",
@@ -16,9 +17,13 @@ const errors = {
   postCode: "کد پستی نا معتبر است",
 }
 
-myInput[0].addEventListener("keyup", () => {
-  // console.log(errorHandler(myInput[0].getAttribute("name"),myInput[0].value,true,errors));
+for (let i = 0; i < myInput.length; i++) {
 
-  console.log(typeof errorHandler());
+  myInput[i].addEventListener("keyup", () => {
 
-})
+    console.log(ValidationHandler(errors, myInput[i].getAttribute("name"), myInput[i].value, true));
+
+  })
+
+}
+
