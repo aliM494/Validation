@@ -35,14 +35,11 @@ const pv = (pmlv = false, value) => {  //pmlv => Password multi level validation
     const { medium, strong } = regex.password;
 
     if (pmlv) {
-
         if (strong.test(value)) {
             status = {
                 strong: "strong",
                 valid: true
             }
-
-            localStorage.setItem("password", value)
             return status;
 
         } else if (medium.test(value)) {
@@ -50,8 +47,6 @@ const pv = (pmlv = false, value) => {  //pmlv => Password multi level validation
                 strong: "medium",
                 valid: true
             }
-
-            localStorage.setItem("password", value)
             return status;
         } else {
             status = {
@@ -61,7 +56,6 @@ const pv = (pmlv = false, value) => {  //pmlv => Password multi level validation
 
             return status;
         }
-
     } else {
         if (strong.test(value)) {
             status.valid = true;
@@ -75,23 +69,16 @@ const pv = (pmlv = false, value) => {  //pmlv => Password multi level validation
 
 }
 
-const cpv = (value) => {  //Confirm Password validation
-
-    const password = (localStorage.getItem("password") !== null) ? localStorage.getItem("password") : null;
-
+const cpv = (value, password) => {  //Confirm Password validation
     if (value === password) {
-
-
-        localStorage.removeItem("password");
         return true;
-
     } else {
         return false;
     }
 
 }
 
-const pvh = (value, pErrors) => { //Password validation handler
+const pvh = (regType, value, errors) => { //Password validation handler
 
     let status = {
         valid: false,
@@ -99,13 +86,36 @@ const pvh = (value, pErrors) => { //Password validation handler
         passwordStatus: null
     }
 
-    const result = pv(true, value);
-    const { valid, strong } = result;
+    if (regType === "pv") {
+        const { valid, strong } = pv(true, value);
 
-    status = {
-        valid: valid,
-        error: pErrors[strong],
-        passwordStatus: result
+        localStorage.removeItem("password");
+
+        if (valid) {
+            localStorage.setItem("password", value);
+        }
+
+        status = {
+            valid: valid,
+            error: errors[strong],
+            passwordStatus: strong
+        }
+    } else {
+
+        const password = localStorage.getItem("password");
+
+        const valid = cpv(value, password);
+
+        if (!valid) {
+            status = {
+                valid: valid,
+                error: errors
+            }
+        } else {
+            status.valid = valid
+        }
+
+
     }
 
     return status;
@@ -138,11 +148,11 @@ const ValidationHandler = (errors, type, value, pmlv = false) => { //Password va
 
     if (pmlv) {
         switch (regexType) {
-            case "pv": status = pvh(value, errors["password"])
+            case "pv": status = pvh(regexType, value, errors["password"])
 
                 break;
 
-            case "cpv": (cpv(value)) ? status.valid = true : status = { valid: false, error: errors[type] }
+            case "cpv": status = pvh(regexType, value, errors["confirmPassword"])
 
                 break;
 
@@ -171,8 +181,6 @@ const ValidationHandler = (errors, type, value, pmlv = false) => { //Password va
     }
 
     return status;
-
-
 }
 
 export default ValidationHandler;

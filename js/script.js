@@ -24,6 +24,5 @@ for (let i = 0; i < myInput.length; i++) {
     console.log(ValidationHandler(errors, myInput[i].getAttribute("name"), myInput[i].value, true));
 
   })
-
 }
 
