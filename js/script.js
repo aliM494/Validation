@@ -1,6 +1,7 @@
-import ValidationHandler from '/js/validation.js'
+import ValidationHandler from "/js/validation.js";
 
-const myInput = document.querySelectorAll("Input");
+const Form = document.forms["register"];
+const FormInpots = document.forms["register"].getElementsByTagName("input")
 
 const errors = {
   email: "ایمیل نا معتبر است",
@@ -17,12 +18,13 @@ const errors = {
   postCode: "کد پستی نا معتبر است",
 }
 
-for (let i = 0; i < myInput.length; i++) {
+for (let i = 0; i < FormInpots.length; i++) {
 
-  myInput[i].addEventListener("keyup", () => {
+  FormInpots[i].addEventListener("keyup", () => {
 
-    console.log(ValidationHandler(errors, myInput[i].getAttribute("name"), myInput[i].value, true));
+    console.log(ValidationHandler(errors, FormInpots[i].getAttribute("name"), FormInpots[i].value, true));
+
+
 
   })
 }
-
